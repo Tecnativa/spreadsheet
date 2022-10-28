@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<templates>
+    <div
+        t-name="spreadsheet_management.SheetAction"
+        owl="1"
+        class="o_action o_spreadsheet_sheet_action o_field_highlight"
+    >
+        <ControlPanel display="controlPanelDisplay">
+            <t t-set-slot="control-panel-top-right">
+                <t
+                    t-set="status"
+                    t-value="state.activeSheet and state.activeSheet.status"
+                />
+                <FilterValue
+                    t-if="status === Status.Loaded"
+                    filter="filter"
+                    model="state.activeSheet.model"
+                    t-as="filter"
+                    t-foreach="filters"
+                    t-key="filter.id"
+                />
+            </t>
+        </ControlPanel>
+        <t t-set="sheet" t-value="state.activeSheet" />
+        <div
+            class="o_content o_component_with_search_panel"
+            t-att-class="{ o_mobile_sheet: env.isSmall }"
+        >
+            <!-- Main content -->
+            <h3 t-if="!sheet" class="sheet-loading-status">No available sheet</h3>
+            <t t-else="">
+                <t t-set="status" t-value="sheet.status" />
+                <h3
+                    t-if="status === Status.Loading"
+                    class="sheet-loading-status"
+                >Loading...</h3>
+                <div
+                    t-elif="status === Status.Error"
+                    class="sheet-loading-status error"
+                >
+                    An error occured while loading the sheet
+                </div>
+                <t t-else="">
+                    <MobileFigureContainer
+                        t-if="env.isSmall"
+                        spreadsheetModel="sheet.model"
+                        t-key="sheet.id"
+                    />
+                    <div t-else="" class="o_renderer">
+                        <Spreadsheet model="sheet.model" t-key="sheet.id" />
+                    </div>
+                </t>
+            </t>
+        </div>
+    </div>
+</templates>
